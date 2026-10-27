@@ -1,0 +1,8 @@
+{
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "/repo/apps/server/src/game/domain/board.ts",
+    "content": "import { MoveMade } from '../../shared/events/move-made';\n\nexport class Board {}\n"
+  }
+}

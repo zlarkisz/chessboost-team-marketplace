@@ -1,0 +1,19 @@
+{
+  "name": "chessboost",
+  "description": "Claude Code plugins for the chessboost monorepo.",
+  "owner": {
+    "name": "Gleb Bufin",
+    "url": "https://github.com/zlarkisz/chessboost-team-marketplace"
+  },
+  "plugins": [
+    {
+      "name": "chessboost-toolkit",
+      "source": "./plugins/chessboost-toolkit",
+      "description": "/scaffold-context for new bounded contexts and a PreToolUse hook that keeps <bc>/domain framework-free.",
+      "version": "1.0.0",
+      "category": "development",
+      "tags": ["nestjs", "architecture", "ddd", "scaffold", "hooks"],
+      "strict": true
+    }
+  ]
+}
