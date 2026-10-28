@@ -7,6 +7,12 @@ of a release and always mean a major bump.
 
 ## chessboost-toolkit
 
+### [1.0.1] — 2026-10-28
+
+#### Fixed
+
+- `domain-import-guard` — blocked imports now say why: leaving `domain/`, reaching into `shared/`, or importing another bounded context
+
 ### [1.0.0] — 2026-10-27
 
 #### Added

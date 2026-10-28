@@ -10,7 +10,7 @@
       "name": "chessboost-toolkit",
       "source": "./plugins/chessboost-toolkit",
       "description": "/scaffold-context for new bounded contexts and a PreToolUse hook that keeps <bc>/domain framework-free.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "category": "development",
       "tags": [
         "nestjs",
