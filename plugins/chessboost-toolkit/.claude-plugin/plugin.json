@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "description": "Chessboost dev toolkit: /scaffold-context for new bounded contexts and a PreToolUse hook that keeps <bc>/domain framework-free.",
   "author": {
-      "name": "Gleb Bufin"
+    "name": "Gleb Bufin"
   }
 }
