@@ -19,7 +19,17 @@ function parsePayload(raw) {
   }
 }
 
-function findViolations(filePath, domainRoot, text) {
+function leaveReason(domainRoot, boundedContext, resolved) {
+  const srcRoot = path.dirname(path.dirname(domainRoot));
+  const [top, ...rest] = path.relative(srcRoot, resolved).split(path.sep);
+  if (top === 'shared') return 'shared/ — subscribe to events from application/, not domain/';
+  if (top === '..' || top === boundedContext || top === 'infrastructure' || rest.length === 0) {
+    return 'leaves domain/';
+  }
+  return `other bounded context (${top}) — talk to it via shared/events`;
+}
+
+function findViolations(filePath, domainRoot, boundedContext, text) {
   const violations = [];
   for (const [, specifier] of text.matchAll(IMPORT_SPECIFIER)) {
     if (!specifier.startsWith('.')) {
@@ -28,7 +38,7 @@ function findViolations(filePath, domainRoot, text) {
     }
     const resolved = path.resolve(path.dirname(filePath), specifier);
     if (resolved !== domainRoot && !resolved.startsWith(domainRoot + path.sep)) {
-      violations.push({ specifier, reason: 'leaves domain/' });
+      violations.push({ specifier, reason: leaveReason(domainRoot, boundedContext, resolved) });
     }
   }
   return violations;
@@ -43,7 +53,7 @@ if (!match) process.exit(0);
 const [, domainRoot, boundedContext] = match;
 
 const text = payload.tool_input.content ?? payload.tool_input.new_string ?? '';
-const violations = findViolations(filePath, domainRoot, text);
+const violations = findViolations(filePath, domainRoot, boundedContext, text);
 if (violations.length === 0) process.exit(0);
 
 const lines = violations.map((v) => `  · '${v.specifier}' — ${v.reason}`);
