@@ -28,12 +28,24 @@ after `git pull`. To update: `/plugin marketplace update chessboost`, then `/plu
 
 ## Contributing
 
-1. Branch off `main`, change files under `plugins/<name>/`.
-2. Any behaviour change bumps `version` in **both** `plugins/<name>/.claude-plugin/plugin.json`
-   and `.claude-plugin/marketplace.json` — CI checks that they match. Breaking change → major.
-3. Add an entry to `CHANGELOG.md`.
-4. Run `claude plugin validate .` locally → open a PR → green CI → review.
-5. After merge, tag `<plugin>@<version>` and `git push --tags`.
+1. Branch off `main`, change files under `plugins/<name>/`. Use Conventional Commits
+   (`feat:`, `fix:`, `feat!:` …) — the release changelog is built from them.
+2. Run `claude plugin validate .` locally → open a PR → green CI → review.
+3. Don't bump `version` or edit `CHANGELOG.md` by hand — that happens on release.
+
+## Releasing
+
+```sh
+bin/release.sh prepare <plugin>   # on an up-to-date main: changelog entry, version bump, release PR
+# review the release PR, merge it once CI is green
+git switch main && git pull
+bin/release.sh tag <plugin>       # tags <plugin>@<version> on main and pushes the tag
+```
+
+`prepare` runs Claude headlessly to write the `CHANGELOG.md` entry from the plugin's commits since
+its last tag; the script then checks the result and bumps `version` in both manifests. The agent
+may only run `git log` and edit `CHANGELOG.md`; a run is capped at 10 turns, $0.50 and 3 minutes.
+Needs `claude` (logged in, or `ANTHROPIC_API_KEY`), `jq` and `gh`.
 
 Hooks, `bin/` and `.mcp.json` run with the user's permissions — PRs touching them are reviewed
 against [SECURITY.md](SECURITY.md).
