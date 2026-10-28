@@ -12,7 +12,13 @@
       "description": "/scaffold-context for new bounded contexts and a PreToolUse hook that keeps <bc>/domain framework-free.",
       "version": "1.0.0",
       "category": "development",
-      "tags": ["nestjs", "architecture", "ddd", "scaffold", "hooks"],
+      "tags": [
+        "nestjs",
+        "architecture",
+        "ddd",
+        "scaffold",
+        "hooks"
+      ],
       "strict": true
     }
   ]
