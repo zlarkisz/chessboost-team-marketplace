@@ -1,0 +1,9 @@
+{
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "/repo/apps/server/src/game/domain/board.ts",
+    "old_string": "export class Board {}",
+    "new_string": "import { BoostType } from '../../boost/domain/boost-type';\n\nexport class Board {}"
+  }
+}
