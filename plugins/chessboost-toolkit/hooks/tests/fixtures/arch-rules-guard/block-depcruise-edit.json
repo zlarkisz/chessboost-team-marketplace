@@ -1,0 +1,9 @@
+{
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "/repo/apps/server/.dependency-cruiser.cjs",
+    "old_string": "severity: 'error'",
+    "new_string": "severity: 'warn'"
+  }
+}
