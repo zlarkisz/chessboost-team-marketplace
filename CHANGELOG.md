@@ -7,6 +7,13 @@ of a release and always mean a major bump.
 
 ## chessboost-toolkit
 
+### [1.1.0] — 2026-11-02
+
+#### Added
+
+- `adr` skill — record architecture decisions as ADR documents
+- `arch-rules-guard` hook — protects dependency-cruiser and tsconfig configuration from edits
+
 ### [1.0.1] — 2026-10-28
 
 #### Fixed
