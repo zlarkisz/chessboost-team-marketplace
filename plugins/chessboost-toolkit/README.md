@@ -3,7 +3,8 @@
 ## Purpose
 
 Claude Code tooling for the chessboost monorepo: scaffold planned bounded contexts
-from the `game`/`boost` template and keep every `<bc>/domain/` framework-free.
+from the `game`/`boost` template, keep every `<bc>/domain/` framework-free, protect the
+architecture checks from being loosened, and record architecture decisions as ADRs.
 
 ## Install
 
@@ -37,12 +38,19 @@ claude --plugin-dir ./plugins/chessboost-toolkit
 
 ## Skills
 
-—
+| Skill | Triggers | What it does |
+|---|---|---|
+| `adr` | A decision with real alternatives is made or needs writing down — library or pattern choice, data-model or event-contract shape, a boundary between contexts; "write an ADR", "record this decision". | Writes `docs/adr/NNNN-<slug>.md` in the format of ADR 0001 (Context / Decision / Alternatives considered / Consequences), numbering it after the highest existing ADR. Asks for missing reasons instead of inventing them; marks a replaced ADR `superseded by NNNN`; does not commit. |
 
 ## Hooks
 
 | Event | Matcher | Script | Effect |
 |---|---|---|---|
-| `PreToolUse` | `Edit\|Write` | `hooks/domain-import-guard.mjs` | Blocks (exit 2) writes to `apps/server/src/<bc>/domain/**` that import npm packages, `@nestjs/*`, `shared/` or another context. |
+| `PreToolUse` | `Edit\|Write` | `hooks/domain-import-guard.mjs` | Blocks (exit 2) writes to `apps/server/src/<bc>/domain/**` that import npm packages, `@nestjs/*`, `shared/` or another context, naming the reason for each import. |
+| `PreToolUse` | `Edit\|Write` | `hooks/arch-rules-guard.mjs` | Blocks (exit 2) any edit of `.dependency-cruiser.cjs` and `tsconfig*.json`, so a failing check gets fixed in code, not by loosening the rule. Rule changes are made by hand. |
 
-Isolated tests: `node hooks/tests/run.mjs` (6 fixtures, `block-*` → 2, `pass-*` → 0).
+Both hooks see only the `Edit` and `Write` tools — a change made through `Bash` (e.g. `sed -i`) is
+not intercepted.
+
+Isolated tests: `node hooks/tests/run.mjs` — fixtures in `hooks/tests/fixtures/<hook>/`,
+`block-*` → exit 2, `pass-*` → exit 0.
