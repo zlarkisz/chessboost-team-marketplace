@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Usage:
-#   bin/release.sh prepare <plugin>   changelog via Claude → version bump → PR
-#   bin/release.sh tag <plugin>       after the PR is merged: tag main and push the tag
+#   bin/release.sh prepare <plugin>             changelog via Claude → version bump → PR
+#   bin/release.sh prepare <plugin> --suggest   same, but stop after the bump: changes stay
+#                                               uncommitted in the working tree for review
+#   bin/release.sh tag <plugin>                 after the PR is merged: tag main and push the tag
 
 set -euo pipefail
 
@@ -10,6 +12,7 @@ cd "$REPO_ROOT"
 
 MODE="${1:-}"
 PLUGIN="${2:-}"
+OPTION="${3:-}"
 PROMPT_FILE="bin/release-prompt.md"
 MARKETPLACE_JSON=".claude-plugin/marketplace.json"
 PLUGIN_JSON="plugins/$PLUGIN/.claude-plugin/plugin.json"
@@ -23,8 +26,10 @@ require_cmd() {
   command -v "$1" >/dev/null 2>&1 || die "$1 not found in PATH"
 }
 
-[[ "$MODE" == "prepare" || "$MODE" == "tag" ]] || die "usage: bin/release.sh prepare|tag <plugin>"
-[[ -n "$PLUGIN" ]] || die "usage: bin/release.sh prepare|tag <plugin>"
+USAGE="usage: bin/release.sh prepare <plugin> [--suggest] | tag <plugin>"
+[[ "$MODE" == "prepare" || "$MODE" == "tag" ]] || die "$USAGE"
+[[ -n "$PLUGIN" ]] || die "$USAGE"
+[[ -z "$OPTION" || ( "$MODE" == "prepare" && "$OPTION" == "--suggest" ) ]] || die "$USAGE"
 [[ -f "$PLUGIN_JSON" ]] || die "unknown plugin '$PLUGIN': $PLUGIN_JSON not found"
 
 require_cmd git
@@ -160,15 +165,29 @@ validate_response() {
   echo "[release] changelog for $PLUGIN $NEW_VERSION validated ($bump bump)" >&2
 }
 
-bump_and_open_pr() {
-  local branch="release/$PLUGIN@$NEW_VERSION" tmp
-  git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1 && die "branch $branch already exists on origin"
-
+bump_versions() {
+  local tmp
   tmp="$(mktemp)"
   jq --arg v "$NEW_VERSION" '.version = $v' "$PLUGIN_JSON" >"$tmp" && mv "$tmp" "$PLUGIN_JSON"
   tmp="$(mktemp)"
   jq --arg p "$PLUGIN" --arg v "$NEW_VERSION" \
     '(.plugins[] | select(.name == $p) | .version) = $v' "$MARKETPLACE_JSON" >"$tmp" && mv "$tmp" "$MARKETPLACE_JSON"
+}
+
+show_suggestion() {
+  echo >&2
+  git --no-pager diff --stat >&2
+  echo >&2
+  echo "[release] suggestion for $PLUGIN@$NEW_VERSION is in the working tree — nothing committed or pushed." >&2
+  echo "          review:  git diff" >&2
+  echo "          accept:  git switch -c release/$PLUGIN@$NEW_VERSION && git commit -am \"chore(release): $PLUGIN@$NEW_VERSION\"" >&2
+  echo "          reject:  git restore CHANGELOG.md $PLUGIN_JSON $MARKETPLACE_JSON" >&2
+  echo "          port:    git diff > release.patch, then git apply release.patch in another worktree" >&2
+}
+
+open_pr() {
+  local branch="release/$PLUGIN@$NEW_VERSION"
+  git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1 && die "branch $branch already exists on origin"
 
   local entry
   entry="$(git diff -U0 -- CHANGELOG.md | grep '^+' | grep -v '^+++' | cut -c2-)"
@@ -206,7 +225,12 @@ case "$MODE" in
   prepare)
     generate_changelog
     validate_response
-    bump_and_open_pr
+    bump_versions
+    if [[ "$OPTION" == "--suggest" ]]; then
+      show_suggestion
+    else
+      open_pr
+    fi
     ;;
   tag)
     tag_release

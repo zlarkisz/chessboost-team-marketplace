@@ -47,6 +47,10 @@ its last tag; the script then checks the result and bumps `version` in both mani
 may only run `git log` and edit `CHANGELOG.md`; a run is capped at 10 turns, $0.50 and 3 minutes.
 Needs `claude` (logged in, or `ANTHROPIC_API_KEY`), `jq` and `gh`.
 
+`bin/release.sh prepare <plugin> --suggest` stops after the version bump: the changelog entry and
+both version changes stay uncommitted in the working tree, nothing is pushed. Review with
+`git diff`, then commit them yourself or drop them with `git restore`.
+
 Hooks, `bin/` and `.mcp.json` run with the user's permissions — PRs touching them are reviewed
 against [SECURITY.md](SECURITY.md).
 
