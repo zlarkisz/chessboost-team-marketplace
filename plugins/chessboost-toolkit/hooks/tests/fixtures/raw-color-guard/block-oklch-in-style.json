@@ -1,0 +1,8 @@
+{
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "/repo/apps/web/app/components/new-game/OptionTile.vue",
+    "content": "<style scoped>\n.tile { background: oklch(0.62 0.19 259); }\n</style>\n"
+  }
+}

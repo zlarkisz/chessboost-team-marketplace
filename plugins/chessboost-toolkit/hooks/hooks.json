@@ -11,6 +11,10 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}\"/hooks/arch-rules-guard.mjs"
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}\"/hooks/raw-color-guard.mjs"
           }
         ]
       }

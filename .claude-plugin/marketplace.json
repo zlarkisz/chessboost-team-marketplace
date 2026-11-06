@@ -9,7 +9,7 @@
     {
       "name": "chessboost-toolkit",
       "source": "./plugins/chessboost-toolkit",
-      "description": "/scaffold-context for new bounded contexts and a PreToolUse hook that keeps <bc>/domain framework-free.",
+      "description": "/scaffold-context for new bounded contexts, the adr skill, and PreToolUse guards: framework-free <bc>/domain, protected arch configs, no raw colors in .vue.",
       "version": "1.1.0",
       "category": "development",
       "tags": [

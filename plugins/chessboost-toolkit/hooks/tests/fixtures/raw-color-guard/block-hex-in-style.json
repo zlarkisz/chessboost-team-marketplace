@@ -1,0 +1,8 @@
+{
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "/repo/apps/web/app/components/game/MoveList.vue",
+    "content": "<template><ol /></template>\n<style scoped>\n.row { color: #fff; }\n</style>\n"
+  }
+}
