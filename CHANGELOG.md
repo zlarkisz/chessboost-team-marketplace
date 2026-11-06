@@ -7,6 +7,12 @@ of a release and always mean a major bump.
 
 ## chessboost-toolkit
 
+### [1.2.0] — 2026-11-06
+
+#### Added
+
+- `raw-color-guard` hook — blocks raw color values (`#hex`, `rgb()`, `oklch()` and similar) in `.vue` files; use semantic role utilities such as `bg-primary` or `text-muted-foreground` instead
+
 ### [1.1.0] — 2026-11-02
 
 #### Added
