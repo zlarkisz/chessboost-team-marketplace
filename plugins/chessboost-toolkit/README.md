@@ -4,7 +4,8 @@
 
 Claude Code tooling for the chessboost monorepo: scaffold planned bounded contexts
 from the `game`/`boost` template, keep every `<bc>/domain/` framework-free, protect the
-architecture checks from being loosened, and record architecture decisions as ADRs.
+architecture checks from being loosened, keep raw color values out of `.vue` files, and
+record architecture decisions as ADRs.
 
 ## Install
 
@@ -48,8 +49,9 @@ claude --plugin-dir ./plugins/chessboost-toolkit
 |---|---|---|---|
 | `PreToolUse` | `Edit\|Write` | `hooks/domain-import-guard.mjs` | Blocks (exit 2) writes to `apps/server/src/<bc>/domain/**` that import npm packages, `@nestjs/*`, `shared/` or another context, naming the reason for each import. |
 | `PreToolUse` | `Edit\|Write` | `hooks/arch-rules-guard.mjs` | Blocks (exit 2) any edit of `.dependency-cruiser.cjs` and `tsconfig*.json`, so a failing check gets fixed in code, not by loosening the rule. Rule changes are made by hand. |
+| `PreToolUse` | `Edit\|Write` | `hooks/raw-color-guard.mjs` | Blocks (exit 2) writes to `*.vue` whose new text contains a raw color — `#hex` (3/4/6/8 digits) or `rgb()`/`rgba()`/`hsl()`/`hsla()`/`oklch()`/`oklab()`/`lab()`/`lch()`/`hwb()`. Colors live only in `apps/web/app/assets/css/tailwind.css` as semantic roles. `href="#…"`/`to="#…"` anchors and HTML entities pass; named colors (`red`) are not checked. |
 
-Both hooks see only the `Edit` and `Write` tools — a change made through `Bash` (e.g. `sed -i`) is
+All hooks see only the `Edit` and `Write` tools — a change made through `Bash` (e.g. `sed -i`) is
 not intercepted.
 
 Isolated tests: `node hooks/tests/run.mjs` — fixtures in `hooks/tests/fixtures/<hook>/`,
